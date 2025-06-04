@@ -1,0 +1,15 @@
+{
+  "imageId": "faf0deac826c8b954716be338e35117cca60c1177d825b736f5957630161e80f",
+  "executionConfig": {
+    "verifyInputHash": false,
+    "forwardOutput": true
+  },
+  "inputs": [
+    {
+      "inputType": "PublicData",
+      "data": "hello world"
+    }
+  ],
+  "tip": 12000,
+  "expiry": 1000
+}
