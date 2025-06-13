@@ -20,9 +20,10 @@ use solana_program::{
 use solana_program::{
     clock::Clock, 
     sysvar::Sysvar,
-    program::{invoke_signed, invoke},
+    program::invoke_signed,
 };
 use solana_pubkey::declare_id;
+use bonsol_schema::root_as_execution_request_v1;
 
 declare_id!("GDBi9xt8A5bZKYTEU6DDYFufCmoBRFoyehS2GCYpwmQq");
 
@@ -94,7 +95,6 @@ pub fn create_program_account<'a>(
     )
     .map_err(|_e| ProgramError::Custom(0))
 }
-
 
 pub fn process_bonsol_execute<'a>(
     program_id: &Pubkey,
@@ -186,9 +186,28 @@ pub fn process_bonsol_execute<'a>(
 
 pub fn process_bonsol_callback(
     _program_id: &Pubkey,
-    _accounts: &[AccountInfo],
-    _data: &[u8],
+    accounts: &[AccountInfo],
+    _instruction_data: &[u8],
 ) -> ProgramResult {
-    msg!("Bonsol callback invoked");
+    // let (input_digest, committed_outputs) = instruction_data.split_at(32);
+
+    let callback_owner = accounts[0].owner;
+    msg!("Callback owner: {}", callback_owner);
+    assert_eq!(callback_owner, &bonsol_interface::ID, "Callback owner is not Bonsol program");
+    
+    let execution_request_data = accounts[0].data.borrow();
+    let execution_request =
+        root_as_execution_request_v1(*execution_request_data).unwrap();
+
+    let execution_image_id = execution_request.image_id()
+        .ok_or(ProgramError::InvalidInstructionData)?;
+    msg!("Execution Image ID: {}", execution_image_id);
+    assert_eq!(execution_image_id, IMAGE_ID, "Image ID of the zk program does not match");
+
+    // let my_calculated_input_digest = get_input_commitment();
+    // assert_eq!(input_digest, my_calculated_input_digest.as_slice());
+
+    msg!("Checks passed",);
+    // msg!("committed_outputs: {:?}", hex::encode(committed_outputs));
     Ok(())
 }
