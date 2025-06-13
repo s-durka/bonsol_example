@@ -18,15 +18,16 @@ use rand::{
     distributions::Alphanumeric
 };
 
+
 // say_hello zk program
 const IMAGE_ID: &str = "faf0deac826c8b954716be338e35117cca60c1177d825b736f5957630161e80f"; // Image ID of the zk program
-
+const MY_ID: &str = "GDBi9xt8A5bZKYTEU6DDYFufCmoBRFoyehS2GCYpwmQq"; // My program ID
 
 #[tokio::main]
 async fn main() {
     // Program ID of the Solana program in lib.rs
-    let my_program = Pubkey::from_str("GDBi9xt8A5bZKYTEU6DDYFufCmoBRFoyehS2GCYpwmQq").unwrap();
-    let bonsol_program = Pubkey::from_str("BoNsHRcyLLNdtnoDf8hiCNZpyehMC4FDMxs6NTxFi3ew").unwrap();
+    let my_program = Pubkey::from_str(MY_ID).unwrap();
+    let bonsol_program = bonsol_interface::ID;
 
     let rpc_url = String::from("http://127.0.0.1:8899");
     let rpc_client = RpcClient::new_with_commitment(&rpc_url, CommitmentConfig::confirmed());
@@ -56,22 +57,22 @@ async fn main() {
     }
 
     /* invoke process_bonsol_callback() (test that it works):
-    let instruction1 = BonsolExampleInstruction::Callback;
-    let data1 = to_vec(&instruction1).unwrap();
-    let callback_instruction = Instruction::new_with_bytes(
-        my_program, 
-        &data1, 
-        vec![],
-    );
-    let mut transaction = Transaction::new_with_payer(
-        &[callback_instruction],
-        Some(&payer.pubkey()),
-    );
-    transaction.sign(&[&payer], rpc_client.get_latest_blockhash().unwrap());
-    match rpc_client.send_and_confirm_transaction(&transaction) {
-        Ok(signature) => println!("Callback Transaction Signature: {}", signature),
-        Err(err) => eprintln!("Error sending callback transaction: {}", err),
-    }
+        let instruction1 = BonsolExampleInstruction::Callback;
+        let data1 = to_vec(&instruction1).unwrap();
+        let callback_instruction = Instruction::new_with_bytes(
+            my_program, 
+            &data1, 
+            vec![],
+        );
+        let mut transaction = Transaction::new_with_payer(
+            &[callback_instruction],
+            Some(&payer.pubkey()),
+        );
+        transaction.sign(&[&payer], rpc_client.get_latest_blockhash().unwrap());
+        match rpc_client.send_and_confirm_transaction(&transaction) {
+            Ok(signature) => println!("Callback Transaction Signature: {}", signature),
+            Err(err) => eprintln!("Error sending callback transaction: {}", err),
+        }
     */
 
     let instruction_data = BonsolExampleInstruction::Execute {
